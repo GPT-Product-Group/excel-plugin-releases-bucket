@@ -1,0 +1,35 @@
+﻿[
+  {
+    "CategoryCode": "ServiceIP",
+    "CategoryName": "服务器地址",
+    "Name": "Login",
+    "Content": "http://23.20.132.29:3001/auth/signin?callbackUrl=/auth/addin-proxy",
+    "Description": "登录地址",
+    "IsDefault": false
+  },
+  {
+    "CategoryCode": "ServiceIP",
+    "CategoryName": "服务器地址",
+    "Name": "Chat",
+    "Content": "http://23.20.132.29:3002",
+    "Description": "对话地址",
+    "IsDefault": false
+  },
+  {
+    "CategoryCode": "ServiceIP",
+    "CategoryName": "服务器地址",
+    "Name": "Website",
+    "Content": "https://excelmaster.ai",
+    "Description": "官方网址",
+    "IsDefault": false
+  },
+  {
+    "CategoryCode": "LogPath",
+    "CategoryName": "日志地址",
+    "Name": "LogPath",
+    "Content": "C:\\ExcelMaster\\Log",
+    "Description": "本地日志默认地址",
+    "IsDefault": true
+  }
+
+]
