@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        #clearHistoryBtn {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+            #clearHistoryBtn:hover {
+                background-color: #d32f2f;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .filename {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+
+            .filename:hover {
+                color: darkblue;
+            }
+
+        table td:first-child,
+        table th:first-child {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button id="refreshHistory" style="display:none">刷新历史</button> <button id="clearHistoryBtn">清除历史</button>
+    </div>
+    <table id="backupTable">
+        <thead>
+            <tr>
+                <th>UUID</th>
+                <th>Backup Date</th>
+                <th>File Name</th>
+                <th>Task Summary</th>
+            </tr>
+        </thead>
+        <tbody id="backupTableBody">
+        </tbody>
+    </table>
+
+    <script>
+        // Function to parse the date string and format it
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+
+            // 获取年月日
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+
+            // 获取时分秒
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+
+            // 获取毫秒
+            const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+
+            // 组合成所需格式
+            return `${year}.${month}.${day}-${hours}:${minutes}:${seconds}`;
+        }
+
+        // Function to generate table rows from JSON data
+        function generateTable(data) {
+            const tableBody = document.getElementById('backupTableBody');
+            tableBody.innerHTML = '';
+
+            data.forEach(item => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = item.UUID;
+                row.insertCell(1).textContent = formatDate(item.BackupDate);
+
+                const fileNameCell = row.insertCell(2);
+                fileNameCell.className = 'filename';
+                fileNameCell.textContent = item.FileName;
+                fileNameCell.onclick = function () {
+                    openFile(item.FileName);
+                };
+
+                row.insertCell(3).textContent = item.TaskSummary;
+            });
+        }
+
+        // Function to open the file (will be implemented in VSTO)
+        function openFile(fileName) {
+            // Send message to VSTO plugin
+            window.chrome.webview.postMessage({
+                action: 'openFile',
+                fileName: fileName
+            });
+        }
+
+        // Function to receive JSON data from VSTO
+        function receiveBackupHistory(jsonData) {
+            const data = JSON.parse(jsonData);
+            generateTable(data);
+        }
+
+        // Function to clear history
+        function clearHistory() {
+            // Send message to VSTO plugin
+            window.chrome.webview.postMessage({
+                action: 'clearHistory'
+            });
+        }
+
+        // Function to clear history
+        function refreshHistory() {
+            // Send message to VSTO plugin
+            window.chrome.webview.postMessage({
+                action: 'refreshHistory'
+            });
+        }
+
+        // Add event listener for clear history button
+        document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+
+        // Add event listener for clear history button
+        document.getElementById('refreshHistory').addEventListener('click', refreshHistory);
+
+        // Example of how to receive data from VSTO (you'll need to implement this in your VSTO code)
+        window.chrome.webview.addEventListener('message', function (event) {
+            
+            receiveBackupHistory(event.data);
+        });
+
+        // For testing purposes, you can use this sample data
+        const sampleData = [
+            {
+                "UUID": "bb7baf12-3ccc-49c8-a4b8-c9b26dff15e7",
+                "BackupDate": "2024-07-26T18:07:22.993431+08:00",
+                "FileName": "\u5DE5\u4F5C\u7C3F1-20240726-180722-568",
+                "TaskSummary": "VBA-"
+            },
+            {
+                "UUID": "43082954-6b0e-4510-8847-aa17e6867877",
+                "BackupDate": "2024-07-26T18:07:23.0642067+08:00",
+                "FileName": "\u9500\u552E\u88683-20240726-180722-993.xlsx",
+                "TaskSummary": "VBA-"
+            },
+            {
+                "UUID": "db4985d0-8727-4e63-8e92-d2a0c02a34eb",
+                "BackupDate": "2024-07-26T18:07:23.1310934+08:00",
+                "FileName": "\u9500\u552E\u88681-20240726-180723-064.xlsx",
+                "TaskSummary": "VBA-"
+            },
+            {
+                "UUID": "762cd7c0-c61c-491a-a10d-e6834da109b0",
+                "BackupDate": "2024-07-26T18:07:23.1839475+08:00",
+                "FileName": "\u9500\u552E\u88682-20240726-180723-131.xlsx",
+                "TaskSummary": "VBA-"
+            },
+            {
+                "UUID": "94050595-749d-45e0-9683-884f2b8a765f",
+                "BackupDate": "2024-07-26T18:08:32.7411878+08:00",
+                "FileName": "\u5DE5\u4F5C\u7C3F1-20240726-180832-278",
+                "TaskSummary": "VBA-"
+            },
+            {
+                "UUID": "5bcc4851-6ac1-4abc-ba77-4149ebb39eca",
+                "BackupDate": "2024-07-26T18:08:32.8966962+08:00",
+                "FileName": "\u9500\u552E\u88683-20240726-180832-741.xlsx",
+                "TaskSummary": "VBA-"
+            },
+            {
+                "UUID": "2f2684cd-d797-40bf-a170-4b7960fba524",
+                "BackupDate": "2024-07-26T18:08:33.0318274+08:00",
+                "FileName": "\u9500\u552E\u88681-20240726-180832-896.xlsx",
+                "TaskSummary": "VBA-"
+            },
+            {
+                "UUID": "a9b26015-f422-46ee-be8d-2aa9eda71d30",
+                "BackupDate": "2024-07-26T18:08:33.09546+08:00",
+                "FileName": "\u9500\u552E\u88682-20240726-180833-031.xlsx",
+                "TaskSummary": "VBA-"
+            }
+        ];
+
+        // Uncomment this line to test with sample data
+        //generateTable(sampleData);
+    </script>
+</body>
+</html>

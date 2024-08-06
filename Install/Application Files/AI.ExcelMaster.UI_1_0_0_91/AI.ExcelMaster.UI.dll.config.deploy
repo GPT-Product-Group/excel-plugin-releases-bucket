@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+    <!--服务器测试地址-->
+    <!--<add key="Login" value="http://23.20.132.29:3001/auth/signin?callbackUrl=/auth/addin-proxy" />-->
+    <!--<add key="Chat" value="http://23.20.132.29:3002" />-->
+    <!--开发测试地址-->
+    <!--<add key="Chat" value="http://192.168.50.12:3002" />-->
+    <!--接口测试地址-->
+    <add key="API" value="http://dev.excelmaster.ai:3002" />
+    <!--正式地址-->
+    <add key="Login" value="https://excelmaster.ai/api/auth/signin?callbackUrl=/auth/addin-proxy" />
+    <add key="Chat" value="https://lite.excelmaster.ai" />
+    <add key="Website" value="https://excelmaster.ai" />
+    <add key="LogPath" value="C:\\ExcelMaster\\Log" />
+    <add key="DB-GPT" value="http://23.20.132.29:5670/" />
+    <add key="ClientSettingsProvider.ServiceUri" value="" />
+  </appSettings>
+  <system.web>
+    <membership defaultProvider="ClientAuthenticationMembershipProvider">
+      <providers>
+        <add name="ClientAuthenticationMembershipProvider" type="System.Web.ClientServices.Providers.ClientFormsAuthenticationMembershipProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri="" />
+      </providers>
+    </membership>
+    <roleManager defaultProvider="ClientRoleProvider" enabled="true">
+      <providers>
+        <add name="ClientRoleProvider" type="System.Web.ClientServices.Providers.ClientRoleProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri="" cacheTimeout="86400" />
+      </providers>
+    </roleManager>
+  </system.web>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+</configuration>
